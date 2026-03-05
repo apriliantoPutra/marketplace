@@ -53,12 +53,8 @@ export interface CheckoutData {
 }
 
 export interface CheckoutResponse {
-    id: number
-    total_amount: number
-    items_count: number
-    shipping_info: {
-        full_name: string
-        phone: string
-        address: string
-    }
+    midtrans_order_id: string,
+    payment_token: string,
+    payment_url: string,
+    expiry_time: string
 }

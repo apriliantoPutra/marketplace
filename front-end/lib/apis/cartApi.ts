@@ -82,7 +82,7 @@ class CartApi{
     async checkoutCart(checkOut: CheckoutData): Promise<CheckoutResponse> {
         try {
             const response= await api.post(`/cart/checkout`, checkOut)
-            return response.data
+            return response.data.payment
             
         } catch (error) {
             console.error('Terjadi error saat checkout semua data cart:', error)

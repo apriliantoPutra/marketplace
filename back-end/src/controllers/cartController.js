@@ -1,4 +1,5 @@
 const pool= require('../configs/db');
+const { snap } = require('../configs/payment');
 const urlUtils = require('../utils/urlUtils');
 
 const createCart= async(req, res)=> {
@@ -242,24 +243,56 @@ const checkoutCart= async(req, res)=>{
             if(item.quantity > item.stock){
                 throw new Error(`Stock ${item.name} tidak cukup. Tersedia: ${item.stock}`)
             }
-
             const subtotal= item.price * item.quantity
             totalAmount += subtotal
-
             orderItems.push({
                 product_id: item.product_id,
+                name: item.name,
                 quantity: item.quantity,
                 price: item.price,
                 subtotal: subtotal
             })
         }
 
+        // transaksi midtrans
+        const midtransOrderId= `ORDER-${Date.now()}`
+        const parameters = {
+            transaction_details: {
+                order_id: midtransOrderId,
+                gross_amount: totalAmount
+            }, 
+            customer_details: {
+                first_name: shipping_full_name,
+                email: req.user.email,
+                phone: shipping_phone
+            },
+            callbacks: {
+                finish: `${process.env.FRONTEND_URL}/payment-success/${midtransOrderId}`,
+                error: `${process.env.FRONTEND_URL}/payment-error/${midtransOrderId}`,
+                pending: `${process.env.FRONTEND_URL}/payment-pending/${midtransOrderId}`
+            },expiry: {
+                duration: 1,
+                unit: 'hour'
+            }, item_details: orderItems.map(item => ({
+                id: item.product_id,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+            }))
+        }
+        const transaction = await snap.createTransaction(parameters)
+
         // buat order
         const orderResult= await client.query(`
-            INSERT INTO orders (user_id, total_amount, shipping_full_name, shipping_phone, shipping_address, notes)
-            VALUES ($1, $2, $3, $4, $5, $6)
+            INSERT INTO orders (
+            user_id, total_amount, shipping_full_name, shipping_phone, shipping_address, notes,
+            payment_token, payment_url, payment_expiry, payment_details, midtrans_order_id)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
             RETURNING id, shipping_full_name
-        `, [userId, totalAmount, shipping_full_name, shipping_phone, shipping_address, notes])
+        `, [userId, totalAmount, shipping_full_name, shipping_phone, shipping_address, notes,
+            transaction.token, transaction.redirect_url, new Date(Date.now() + 1 * 60 * 60 * 1000), JSON.stringify(transaction), midtransOrderId
+        ]
+    )
         const order= orderResult.rows[0]
 
         // buat order_items dan update stock
@@ -292,6 +325,12 @@ const checkoutCart= async(req, res)=>{
                     phone: shipping_phone,
                     address: shipping_address
                 }
+            },
+            payment: {
+                midtrans_order_id: midtransOrderId,
+                payment_token: transaction.token,
+                payment_url: transaction.redirect_url,
+                expiry_time: new Date(Date.now() + 1 * 60 * 60 * 1000) // jam sekarang + 1 jam
             }
         })
         

@@ -17,6 +17,7 @@ const categoryRoutes= require('./routes/categoryRoute')
 const productRoutes= require('./routes/productRoute')
 const cartRoutes= require('./routes/cartRoute')
 const orderRoutes= require('./routes/orderRoute')
+const paymentRoutes = require('./routes/paymentRoutes')
 
 
 app.get('/', (req, res)=> {
@@ -30,6 +31,7 @@ app.use('/api/category', categoryRoutes)
 app.use('/api/product', productRoutes)
 app.use('/api/cart', cartRoutes)
 app.use('/api/order', orderRoutes)
+app.use('/api/payment', paymentRoutes)
 
 
 app.listen(urlUtils.PORT,()=> {

@@ -4,7 +4,6 @@ interface ErrorStateProps {
     title: string
     message: string
     onRetry?: ()=> void
-    showBackButton?: boolean
     onBack?: () => void
 }
 
@@ -12,7 +11,6 @@ export default function ErrorMessage({
     title, 
     message, 
     onRetry,
-    showBackButton = false,
     onBack
 }: ErrorStateProps) {
     return (
@@ -37,7 +35,7 @@ export default function ErrorMessage({
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         {/* Back Button */}
-                        {showBackButton && onBack && (
+                        { onBack && (
                             <button
                                 onClick={onBack}
                                 className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"

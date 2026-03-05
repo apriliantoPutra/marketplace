@@ -87,11 +87,11 @@ const fetchProducts = async()=> {
       case 'newest':
         filteredProducts.sort((a, b)=> b.id - a.id)
         break
-      case 'price_desc':
-        filteredProducts.sort((a, b)=> a.price - b.price)
-        break
       case 'price_asc':
-        filteredProducts.sort((a, b)=> b.price - a.price)
+        filteredProducts.sort((a, b)=> a.price - b.price) // rendah ke tinggi
+        break
+      case 'price_desc':
+        filteredProducts.sort((a, b)=> b.price - a.price) // tinggi ke rendah
         break
       case 'stock_desc':
         filteredProducts.sort((a, b)=> b.stock - a.stock)

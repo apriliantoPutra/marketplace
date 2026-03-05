@@ -98,12 +98,14 @@ export default function KonfirmasiPage() {
                 shipping_address: formData.shipping_address.trim(),
                 notes: formData.notes.trim() || null
             }
-            await checkout(checkoutData)
+            const paymentData = await checkout(checkoutData)
             
             setSubmitSuccess(true)
-            setTimeout(() => {
-                router.push(`/products`)
-            }, 2000)
+            const queryString = new URLSearchParams({
+                token: paymentData.payment_token,
+                url: paymentData.payment_url
+            }).toString()
+            router.push(`/payment/${paymentData.midtrans_order_id}?${queryString}`)
 
         } catch (err) {
             if (err instanceof AxiosError) {
