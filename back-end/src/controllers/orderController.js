@@ -5,7 +5,7 @@ const getAllOrdersByLogin= async(req, res)=> {
     try {
         const userId= req.user.id
         const result= await pool.query(`
-            SELECT o.id, o.total_amount, o.shipping_full_name, o.shipping_phone, o.status, o.shipping_address, o.created_at,
+            SELECT o.id, o.total_amount, o.shipping_full_name, o.shipping_phone, o.status, o.shipping_address, o.payment_status, o.created_at,
             COUNT(oi.id) as items_count, SUM(oi.quantity) as total_items
             FROM orders o
             LEFT JOIN order_items oi ON o.id= oi.order_id
@@ -107,7 +107,7 @@ const getOrderById = async (req, res) => {
 const getAllOrders= async(req, res)=> {
     try {
         const result= await pool.query(`
-            SELECT o.id, o.total_amount, o.shipping_full_name, o.status, o.shipping_phone, o.shipping_address, o.created_at,
+            SELECT o.id, o.total_amount, o.shipping_full_name, o.status, o.shipping_phone, o.shipping_address, o.payment_status, o.created_at,
             COUNT(oi.id) as items_count, SUM(oi.quantity) as total_items
             FROM orders o
             LEFT JOIN order_items oi ON o.id= oi.order_id

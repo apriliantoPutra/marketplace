@@ -1,7 +1,7 @@
 const express= require('express')
 const router= express.Router()
 const {verifyToken, verifyRole}= require('../middlewares/auth')
-const {getAllOrdersByLogin, getAllOrdersById, getOrderById, editStatusOrder, getAllOrders, getAllOrdersByUserId}= require('../controllers/orderController')
+const {getAllOrdersByLogin, getOrderById, editStatusOrder, getAllOrders, getAllOrdersByUserId}= require('../controllers/orderController')
 
 router.use(verifyToken)
 

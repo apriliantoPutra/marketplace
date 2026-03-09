@@ -10,6 +10,7 @@ export interface Order {
     items_count: number
     total_items: number
     created_at: string
+    payment_status: string
 }
 export interface OrderResponse {
     message: string

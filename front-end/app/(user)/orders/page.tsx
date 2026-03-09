@@ -40,6 +40,32 @@ export default function OrderPage() {
     fetchOrders()
   }, [fetchOrders])
 
+  // Get status payment
+    const getStatusPaymentColor = (status: string) => {
+        switch (status) {
+            case 'pending':
+                return 'bg-yellow-100 text-yellow-800'
+            case 'paid':
+                return 'bg-green-100 text-green-800'
+            case 'cancelled':
+                return 'bg-red-100 text-red-800'
+            default:
+                return 'bg-gray-100 text-gray-800'
+        }
+    }
+    const getStatusPaymentText = (status: string) => {
+        switch (status) {
+            case 'pending':
+                return 'Belum bayar'
+            case 'paid':
+                return 'Sudah bayar'
+            case 'cancelled':
+                return 'Dibatalkan'
+            default:
+                return status
+        }
+    }
+
 
   // Empty state
   if (orders.length === 0) {
@@ -160,6 +186,7 @@ export default function OrderPage() {
                   <th className="px-6 py-3">Order ID</th>
                   <th className="px-6 py-3">Tanggal</th>
                   <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3">Status Pembayaran</th>
                   <th className="px-6 py-3">Items</th>
                   <th className="px-6 py-3">Total</th>
                   <th className="px-6 py-3">Aksi</th>
@@ -179,6 +206,11 @@ export default function OrderPage() {
                       <td className="px-6 py-4">
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${status.color}`}>
                           {status.label}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusPaymentColor(order.payment_status)}`}>
+                          {getStatusPaymentText(order.payment_status)}
                         </span>
                       </td>
                       <td className="px-6 py-4">
